@@ -10,6 +10,7 @@ from the packages folder
 current_location = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(current_location, '../packages'))
 sys.path.append(os.path.join(current_location, '../'))
+sys.path.append(os.path.join(current_location, '../dogcat'))
 
 '''
 The following imports must be placed after picking up of pre-compiled dependencies

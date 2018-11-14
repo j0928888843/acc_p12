@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import handle
+import handle
 
 urlpatterns = [
     url(r'^predict.html$', handle.predict_html, name='predict_html'),
