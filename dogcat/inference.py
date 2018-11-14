@@ -16,6 +16,8 @@ import gen_util
 
 logger = gen_util.get_logger()
 
+inf_model = None
+
 def get_model_input_shape(model):
     """
     Gets the dimensions of a sequential keras model's input.
@@ -27,21 +29,28 @@ def get_model_input_shape(model):
     _, image_height, image_width, image_channel = model_input.shape
     return image_height, image_width, image_channel
 
-def create_inference_model(verbose):
+def initialize_model(verbose):
     """
     Constructor for inference model
     """
-    logger.info("Initializing the model...")
-    inf_model = tf.keras.models.load_model('/tmp/model.hdf5')
-    logger.info("...done")
+    global inf_model
+    if inf_model is None:
+        model_path = "/tmp/model.hdf5"
+        logger.info("Initializing the model from %s..." % model_path)
+        inf_model = tf.keras.models.load_model(model_path)
+        logger.info("...done")
+    else:
+        logger.info("Model already initialized")
     if verbose:
         inf_model.summary()
+
     return inf_model
 
-def run_inference_model( inf_model, inference_path, verbose ):
+def run_inference( inference_path, verbose ):
     """
     Runs model training
     """
+    global inf_model
     logger.info("Loading images")
     image_height, image_width, _ = get_model_input_shape(inf_model)
 
@@ -60,9 +69,6 @@ def run_inference_model( inf_model, inference_path, verbose ):
     sorted_file_to_pred = sorted(file_to_pred, key=operator.itemgetter(0))
     print("Prediction (probability of dog):\n'{}'".format(pprint.pformat(sorted_file_to_pred)))
     return sorted_file_to_pred
-
-initialized = False
-inf_model = None
 
 def predict(params):
 
@@ -101,14 +107,12 @@ def predict(params):
         local_image_path,_ = urllib.urlretrieve(image_url,os.path.join(tmp_dir,filename))
         logger.info("Retrieved image file: '{}' --> '{}'.".format(image_url,local_image_path))
 
-    global initialized
     global inf_model
 
-    if not initialized:
-        inf_model = create_inference_model(verbose=False)
-        initialized = True
+    if inf_model is None:
+        initialize_model(verbose=False)
 
-    inf_res = run_inference_model( inf_model, inference_path=tmp_dir, verbose=False)
+    inf_res = run_inference(inference_path=tmp_dir, verbose=False)
 
     shutil.rmtree(tmp_dir)
 
