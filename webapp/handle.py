@@ -4,14 +4,13 @@ import json
 from django.http import HttpResponse
 
 import tensorflow as tf
-from dogcat import model_inference, gen_util
-from dogcat.api import predict
+from dogcat import inference, gen_util
 
 logger = gen_util.get_logger()
 
 def predict_json(response):
     try:
-        _,inf_res = predict(response.GET)
+        _,inf_res = inference.predict(response.GET)
         return HttpResponse(json.dumps({"inference":inf_res}), content_type='application/json')
     except Exception as ex:
         logger.error('Error: '+str(ex))
@@ -26,7 +25,7 @@ def predict_html(response):
     body += '<form method=\"get\"> <input type=\"text\" name=\"image\" size=\"100\"> <input type=\"submit\" value=\"Submit\"></form><br><p>'
 
     try:
-        image_url, inf_res = predict(response.GET)
+        image_url, inf_res = inference.predict(response.GET)
     except Exception as ex:
         logger.error('Error: '+str(ex))
         body += 'Error:<br><pre>{}</pre>'.format(str(ex))
