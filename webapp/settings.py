@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
+
+# update sys path so that imports work properly
+current_location = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(current_location, os.pardir, 'packages'))
+sys.path.append(os.path.join(current_location, os.pardir))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

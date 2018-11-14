@@ -8,7 +8,6 @@ import pprint
 import operator
 
 import gen_util
-import models
 
 logger = gen_util.get_logger()
 

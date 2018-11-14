@@ -3,22 +3,9 @@ import sys
 import json
 from django.http import HttpResponse
 
-'''
-This is needed so that the script running on AWS will pick up the pre-compiled dependencies
-from the packages folder
-'''
-current_location = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(current_location, '../packages'))
-sys.path.append(os.path.join(current_location, '../'))
-sys.path.append(os.path.join(current_location, '../dogcat'))
-
-'''
-The following imports must be placed after picking up of pre-compiled dependencies
-'''
 import tensorflow as tf
-import model_inference
-import gen_util
-from api import predict
+from dogcat import model_inference, gen_util
+from dogcat.api import predict
 
 logger = gen_util.get_logger()
 

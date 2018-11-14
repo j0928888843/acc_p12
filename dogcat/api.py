@@ -4,16 +4,6 @@ import random
 import tempfile
 import urllib
 
-'''
-This is needed so that the script running on AWS will pick up the pre-compiled dependencies
-from the packages folder
-'''
-current_location = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(current_location, '../packages'))
-
-'''
-The following imports must be placed after picking up of pre-compiled dependencies
-'''
 import model_inference
 import gen_util
 
