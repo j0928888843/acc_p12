@@ -8,4 +8,4 @@ RUN wget --quiet https://s3.amazonaws.com/glikson-public/DLL/model/model_197x197
 ENV MODEL "https://s3.amazonaws.com/glikson-public/DLL/model/model_197x197.hdf5"
 EXPOSE 8080
 
-CMD python -u webapp/manage.py runserver 0.0.0.0:8080
+CMD python -u webapp/manage.py runserver --nothreading 0.0.0.0:8080
