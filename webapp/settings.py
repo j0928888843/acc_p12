@@ -53,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.dogcat.metrics',
+    'middleware.dogcat.ratelimit'
 ]
 
 ROOT_URLCONF = 'urls'

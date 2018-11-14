@@ -12,11 +12,14 @@ import shutil
 import tempfile
 import urllib
 
+import threading
+
 import gen_util
 
 logger = gen_util.get_logger()
 
 inf_model = None
+mutex = threading.Lock()
 
 def get_model_input_shape(model):
     """
@@ -34,13 +37,14 @@ def initialize_model(verbose):
     Constructor for inference model
     """
     global inf_model
-    if inf_model is None:
-        model_path = "/tmp/model.hdf5"
-        logger.info("Initializing the model from %s..." % model_path)
-        inf_model = tf.keras.models.load_model(model_path)
-        logger.info("...done")
-    else:
-        logger.info("Model already initialized")
+    with mutex:
+        if inf_model is None:
+            model_path = "/tmp/model.hdf5"
+            logger.info("Initializing the model from %s..." % model_path)
+            inf_model = tf.keras.models.load_model(model_path)
+            logger.info("...done")
+        else:
+            logger.info("Model already initialized")
     if verbose:
         inf_model.summary()
 
