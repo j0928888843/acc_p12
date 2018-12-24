@@ -9,11 +9,11 @@ def metrics(get_response):
     def middleware(request):
         print "Request received: " + str(request)
         try:
-            cw = boto3.client("cloudwatch", aws.utils.myRegion)
+            cw = boto3.client("cloudwatch", aws.utils.AWS_REGION)
             cw.put_metric_data(MetricData=[
                     {
                     'MetricName': 'requests',
-                    'Dimensions': [ {'Name':'AutoScalingGroupName', 'Value': aws.utils.myASG} ], 
+                    'Dimensions': [ {'Name':'AutoScalingGroupName', 'Value': aws.utils.AWS_ASG_NAME} ],
                     'Unit': 'Count',
                     'Value': 1,
                     'StorageResolution': 1 # high resolution
