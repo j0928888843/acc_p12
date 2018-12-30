@@ -13,6 +13,8 @@ $ docker build -t $IMAGE app/
 $ REGION="us-east-1"
 $ aws configure set region $REGION
 $ $(aws ecr get-login --no-include-email)
+# The following command creates an image repository called "719p12". You need to do it just once.
+$ aws ecr create-repository --repository-name $REPO
 $ REGISTRY=$(aws ecr describe-repositories --repository-names $REPO | jq -r .repositories[0].registryId)
 $ REGISTRYURL=$REGISTRY.dkr.ecr.$REGION.amazonaws.com
 $ docker tag $IMAGE $REGISTRYURL/$IMAGE
