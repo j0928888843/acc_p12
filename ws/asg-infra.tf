@@ -160,24 +160,24 @@ resource "aws_iam_instance_profile" "profile-for-ec2" {
 resource "aws_launch_configuration" "launch-config" {
   name = "p12-launch-config"
   image_id             = "${data.aws_ami.p12-ami.id}"
-  instance_type        = "c5.large"
+  instance_type        = "t2.small"
   security_groups      = ["${aws_security_group.security-group-alb-asg.name}"]
   iam_instance_profile = "${aws_iam_instance_profile.profile-for-ec2.name}"
 }
 
 resource "aws_alb_target_group" "target-group" {
-  name                 = "p21-target-group"
+  name                 = "p12-target-group"
   port                 = "80"
   protocol             = "HTTP"
   vpc_id               = "${aws_default_vpc.default.id}"
-  slow_start           = 120                              // Wait 120s for the server to warm up.
+  slow_start           = 0                               // Do not wait for the server to warm up.
   deregistration_delay = 5                               // Terminate instance 5s after deregistreted.
 
   health_check {
     protocol = "HTTP"
-    timeout  = 30
-    interval = 120
-    path     = "/predict"
+    timeout  = 10
+    interval = 30
+    path     = "/"
     port     = 80
     unhealthy_threshold = 10
   }
@@ -188,16 +188,16 @@ resource "aws_alb_target_group" "target-group" {
 }
 
 resource "aws_alb_target_group" "target-group-heartbeat" {
-  name                 = "p21-target-group-heartbeat"
+  name                 = "p12-target-group-heartbeat"
   port                 = "8080"
   protocol             = "HTTP"
   vpc_id               = "${aws_default_vpc.default.id}"
-  slow_start           = 120                             // Wait 120s for the server to warm up.
+  slow_start           = 0                               // Do not wait for the server to warm up.
   deregistration_delay = 5                               // Terminate instance 5s after deregistreted.
 
   health_check {
     protocol = "HTTP"
-    interval = 60
+    interval = 30
     path     = "/heartbeat"
     port     = 8080
   }
@@ -249,7 +249,7 @@ resource "aws_autoscaling_group" "asg" {
   desired_capacity          = 1
   enabled_metrics           = ["GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
   health_check_type         = "ELB"
-  health_check_grace_period = 100
+  health_check_grace_period = 30
   default_cooldown          = 5
 
   launch_configuration = "${aws_launch_configuration.launch-config.name}"
