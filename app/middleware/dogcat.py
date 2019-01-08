@@ -4,11 +4,18 @@ import aws.utils
 from django.http import HttpResponse
 import json
 
+# check if the request is going to trigger the inference logic
+def _is_inference(request):
+    # TODO: align with registered url patterns
+    return request.path.startswith('/dev/predict')
+
 # simple metrics collection middleware
 def metrics(get_response):
     def middleware(request):
-        print "Request received: " + str(request)
-        try:
+        print "Request received: {} (inference={}) ".format(
+                  str(request.get_full_path()),_is_inference(request))
+        if _is_inference(request):
+          try:
             cw = boto3.client("cloudwatch", aws.utils.AWS_REGION)
             cw.put_metric_data(MetricData=[
                     {
@@ -19,8 +26,8 @@ def metrics(get_response):
                     'StorageResolution': 1 # high resolution
                     }
                 ], Namespace='p12')
-        except Exception as ex:
-             print "Exception: " + str(ex)
+          except Exception as ex:
+            print "Exception: " + str(ex)
         # forward the request to the next handler
         response = get_response(request)
         return response
@@ -36,7 +43,8 @@ def ratelimit(get_response):
     def middleware(request):
         global inflight
         with mutex:
-            inflight += 1 
+            if _is_inference(request):
+                inflight += 1
             print inflight
         try:
             if inflight <= THRESHOLD:
@@ -49,7 +57,8 @@ def ratelimit(get_response):
             response = HttpResponse(json.dumps({"error": str(ex)}), content_type='application/json', status=500)
         finally:
             with mutex:
-                inflight -= 1
+                if _is_inference(request):
+                    inflight -= 1
                 print inflight
 
         return response
