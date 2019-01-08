@@ -1,4 +1,7 @@
-# 15719: Starter code for Poroject 1 - Part 2
+# 15719: Starter code for Project 1 - Part 2
+
+Please, follow instructions instructions at [TheProject.Zone](https://theproject.zone/s19-advcc/autoscaling-controller) to develop a custom auto-scaling controller that meets project requirements.
+
 ## Web Service - Application
 ### Build Application Image
 ```
@@ -45,6 +48,6 @@ $ ALB_URL=$(terraform output load-balancer-dns)
 ```
 ## Test End-to-End
 ```
-$ loadtest -c 5 --rps 9 -t 300 http://${ALB_URL}/predict
+$ loadtest -c 5 --rps 9 -t 300 http://${ALB_URL}/dev/predict
 ```
 
