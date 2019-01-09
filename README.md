@@ -8,7 +8,7 @@ Please, follow instructions instructions at [TheProject.Zone](https://theproject
 $ REPO="719p12"
 $ TAG="latest"
 $ IMAGE=$REPO:$TAG
-$ docker build -t $IMAGE app/
+$ docker build -t $IMAGE webservice/
 ```
 
 ### Upload to EC2 Container Registry (ECR)
