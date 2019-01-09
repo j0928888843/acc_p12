@@ -50,4 +50,20 @@ $ ALB_URL=$(terraform output load-balancer-dns)
 ```
 $ loadtest -c 5 --rps 9 -t 300 http://${ALB_URL}/dev/predict
 ```
+## Pulling starter updates
+1. Add the student common starter code repository as a remote (needs to be done only once):
+    ```
+    $ git remote add starter git@github.com:cmu15719/p1.2-starter.git
+    ```
+1. Check if there are pending changes:
+    ```
+    $ git fetch starter
+    $ git log master..starter/master
+    ```
+    If the output is not empty - there are pending changes you need to pull.
+1. Pull from the student common starter code repository:
+    ```
+    $ git pull starter/master master
+    ```
+1. Resolve potential conflicts by merging
 
