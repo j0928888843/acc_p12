@@ -165,8 +165,8 @@ resource "aws_launch_configuration" "launch-config" {
   iam_instance_profile = "${aws_iam_instance_profile.profile-for-ec2.name}"
 }
 
-resource "aws_alb_target_group" "target-group" {
-  name                 = "p12-target-group"
+resource "aws_alb_target_group" "target-group-ws" {
+  name                 = "p12-target-group-ws"
   port                 = "80"
   protocol             = "HTTP"
   vpc_id               = "${aws_default_vpc.default.id}"
@@ -175,11 +175,10 @@ resource "aws_alb_target_group" "target-group" {
 
   health_check {
     protocol = "HTTP"
-    timeout  = 10
+    timeout  = 5
     interval = 30
     path     = "/"
     port     = 80
-    unhealthy_threshold = 10
   }
 
   tags = "${merge(
@@ -187,8 +186,8 @@ resource "aws_alb_target_group" "target-group" {
   )}"
 }
 
-resource "aws_alb_target_group" "target-group-heartbeat" {
-  name                 = "p12-target-group-heartbeat"
+resource "aws_alb_target_group" "target-group-admin" {
+  name                 = "p12-target-group-admin"
   port                 = "8080"
   protocol             = "HTTP"
   vpc_id               = "${aws_default_vpc.default.id}"
@@ -198,7 +197,7 @@ resource "aws_alb_target_group" "target-group-heartbeat" {
   health_check {
     protocol = "HTTP"
     interval = 30
-    path     = "/heartbeat"
+    path     = "/"
     port     = 8080
   }
 
@@ -219,24 +218,24 @@ resource "aws_alb" "alb" {
   )}"
 }
 
-resource "aws_lb_listener" "alb_listener" {
+resource "aws_lb_listener" "alb_listener_ws" {
   load_balancer_arn = "${aws_alb.alb.arn}"
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.target-group.arn}"
+    target_group_arn = "${aws_alb_target_group.target-group-ws.arn}"
     type             = "forward"
   }
 }
 
-resource "aws_lb_listener" "alb_listener_heartbeat" {
+resource "aws_lb_listener" "alb_listener_admin" {
   load_balancer_arn = "${aws_alb.alb.arn}"
   port              = "8080"
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.target-group-heartbeat.arn}"
+    target_group_arn = "${aws_alb_target_group.target-group-admin.arn}"
     type             = "forward"
   }
 }
@@ -253,7 +252,7 @@ resource "aws_autoscaling_group" "asg" {
   default_cooldown          = 5
 
   launch_configuration = "${aws_launch_configuration.launch-config.name}"
-  target_group_arns    = ["${aws_alb_target_group.target-group.arn}", "${aws_alb_target_group.target-group-heartbeat.arn}"]
+  target_group_arns    = ["${aws_alb_target_group.target-group-ws.arn}", "${aws_alb_target_group.target-group-admin.arn}"]
 
   tags = [
     {
