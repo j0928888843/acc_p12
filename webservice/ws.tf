@@ -6,7 +6,7 @@
 locals {
   # common tags applied to all resources
   common_tags = {
-    Project = "15719.p1"
+    Project = "15719.p12"
   }
 }
 
@@ -257,7 +257,7 @@ resource "aws_autoscaling_group" "asg" {
   tags = [
     {
       key                 = "Project"
-      value               = "15719.p1"
+      value               = "15719.p12"
       propagate_at_launch = true
     },
   ]
