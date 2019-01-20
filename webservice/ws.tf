@@ -160,7 +160,7 @@ resource "aws_iam_instance_profile" "profile-for-ec2" {
 resource "aws_launch_configuration" "launch-config" {
   name = "p12-launch-config"
   image_id             = "${data.aws_ami.p12-ami.id}"
-  instance_type        = "t2.small"
+  instance_type        = "c5.large" // you can use t2.small for testing logic. performance tests must use c5.large
   security_groups      = ["${aws_security_group.security-group-alb-asg.name}"]
   iam_instance_profile = "${aws_iam_instance_profile.profile-for-ec2.name}"
 }
