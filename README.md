@@ -15,10 +15,11 @@ $ docker build -t $IMAGE webservice/
 ```
 $ REGION="us-east-1"
 $ aws configure set region $REGION
+$ aws configure set output json
 $ $(aws ecr get-login --no-include-email)
 # The following command creates an image repository called "719p12". You need to do it just once.
 $ aws ecr create-repository --repository-name $REPO
-$ REGISTRY=$(aws ecr describe-repositories --repository-names $REPO | jq -r .repositories[0].registryId)
+$ REGISTRY=$(aws ecr describe-repositories --repository-names $REPO --output json| jq -r .repositories[0].registryId)
 $ REGISTRYURL=$REGISTRY.dkr.ecr.$REGION.amazonaws.com
 $ docker tag $IMAGE $REGISTRYURL/$IMAGE
 $ docker push $REGISTRYURL/$IMAGE
@@ -33,7 +34,7 @@ $ export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
 $ export AWS_ASG_NAME="myasg"
 $ docker run -d -p 8080:80 -e AWS_SECRET_ACCESS_KEY -e AWS_ACCESS_KEY_ID -e AWS_ASG_NAME --name p12 $IMAGE
 # Test
-$ curl http://localhost:8080/predict?image=https://fido.imgix.net/wp/2013/11/cute-puppy.jpg
+$ curl http://localhost:8080/dev/predict?image=https://fido.imgix.net/wp/2013/11/cute-puppy.jpg
 $ docker logs p12
 # Cleanup
 $ docker rm -f p12
@@ -63,7 +64,6 @@ $ loadtest -c 5 --rps 9 -t 300 http://${ALB_URL}/dev/predict
     If the output is not empty - there are pending changes you need to pull.
 1. Pull from the student common starter code repository:
     ```
-    $ git pull starter/master master
+    $ git pull starter master
     ```
 1. Resolve potential conflicts by merging
-
