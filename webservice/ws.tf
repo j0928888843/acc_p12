@@ -1,8 +1,3 @@
-# provider "aws" {
-#   profile = "default"
-#   region = "us-east-1"
-# }
-
 locals {
   # common tags applied to all resources
   common_tags = {
@@ -83,6 +78,7 @@ data "aws_ami" "p12-ami" {
     name   = "name"
     values = ["cmu-advcc-p12"]
   }
+  owners = ["904558392758"]
 }
 
 # IAM role attached to the launch configuration. This governs what resources our
@@ -175,10 +171,9 @@ resource "aws_alb_target_group" "target-group-ws" {
 
   health_check {
     protocol = "HTTP"
-    timeout  = 5
+    timeout  = 10
     interval = 30
     path     = "/"
-    port     = 80
   }
 
   tags = "${merge(
@@ -198,7 +193,6 @@ resource "aws_alb_target_group" "target-group-admin" {
     protocol = "HTTP"
     interval = 30
     path     = "/"
-    port     = 8080
   }
 
   tags = "${merge(
@@ -244,12 +238,12 @@ resource "aws_autoscaling_group" "asg" {
   name                      = "p12-asg"
   availability_zones        = ["${aws_default_subnet.default_az1.availability_zone}"]
   min_size                  = 1
-  max_size                  = 10
-  desired_capacity          = 1
+  max_size                  = 5
+  desired_capacity          = 2
   enabled_metrics           = ["GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
   health_check_type         = "ELB"
-  health_check_grace_period = 30
-  default_cooldown          = 5
+  health_check_grace_period = 60
+  default_cooldown          = 180
 
   launch_configuration = "${aws_launch_configuration.launch-config.name}"
   target_group_arns    = ["${aws_alb_target_group.target-group-ws.arn}", "${aws_alb_target_group.target-group-admin.arn}"]

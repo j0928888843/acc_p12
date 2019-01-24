@@ -5,7 +5,7 @@
 locals {
   # common tags applied to all resources
   common_tags = {
-    Project = "15719.p1"
+    Project = "15719.p12"
   }
 }
 
@@ -199,7 +199,7 @@ resource "aws_sfn_state_machine" "lambda-state-machine" {
     },
     "wait": {
       "Type": "Wait",
-      "Seconds": 30,
+      "Seconds": 60,
       "Next": "lambda"
     },
     "gone": {

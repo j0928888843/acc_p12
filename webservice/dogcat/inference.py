@@ -28,7 +28,7 @@ def get_model_input_shape(model):
     """
     assert len(model.inputs) == 1, "Only supporting 1 input into model"
     model_input = model.inputs[0]
-    # TODO Assumes channel last and conv layer
+    # Assumes channel last and conv layer
     _, image_height, image_width, image_channel = model_input.shape
     return image_height, image_width, image_channel
 
@@ -100,10 +100,9 @@ def predict(params):
             images_url = params['images']
     if images_url is not None: # input is a tar.gz of images
         logger.info("Downloading and extracting images from '{}'".format(images_url))
-        os.system("curl -sSo- {} | tar xvz -C {}".format(images_url,tmp_dir)) #TODO implement in Python
+        os.system("curl -sSo- {} | tar xvz -C {}".format(images_url,tmp_dir))
     else:
         logger.info("Retrieving image: '{}'".format(image_url))
-        #TODO add error handling
         filename = image_url[image_url.rfind("/")+1:]
         local_image_path,_ = urllib.urlretrieve(image_url,os.path.join(tmp_dir,filename))
         logger.info("Retrieved image file: '{}' --> '{}'.".format(image_url,local_image_path))
