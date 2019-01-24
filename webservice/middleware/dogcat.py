@@ -6,7 +6,6 @@ import json
 
 # check if the request is going to trigger the inference logic
 def _is_inference(request):
-    # TODO: align with registered url patterns
     return request.path.startswith('/dev/predict')
 
 # simple metrics collection middleware
@@ -45,9 +44,9 @@ def ratelimit(get_response):
         with mutex:
             if _is_inference(request):
                 inflight += 1
-            print inflight
+                print inflight
         try:
-            if inflight <= THRESHOLD:
+            if _is_inference(request) == False or inflight <= THRESHOLD:
                 # forward the request to the next handler
                 response = get_response(request)
             else:
@@ -59,7 +58,7 @@ def ratelimit(get_response):
             with mutex:
                 if _is_inference(request):
                     inflight -= 1
-                print inflight
+                    print inflight
 
         return response
 

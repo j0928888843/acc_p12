@@ -40,4 +40,5 @@ def predict_html(response):
     return HttpResponse(body, content_type='text/html')
 
 def error404(request):
+    # NOTE: we intentionally do not return an error code here
     return HttpResponse(json.dumps({"message":"use ${hostname}/dev/predict.html to check the web service"}), content_type='application/json')

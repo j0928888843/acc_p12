@@ -28,7 +28,7 @@ def lambda_handler(event, context):
             },
             'Period': 1,
             'Stat': 'Sum',
-            'Unit': 'Count', # 'None'? 'Count'? 'Count/Second'?
+            'Unit': 'Count',
         },
         'ReturnData': True
     }]
