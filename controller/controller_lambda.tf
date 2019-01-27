@@ -9,6 +9,12 @@ locals {
   }
 }
 
+############ invocation interval in the State Machine
+# "${var.state_function_interval}"
+variable "state_function_interval" {
+  default = "10"
+}
+
 variable "asg_name" {
   type    = "string"
 }
@@ -199,7 +205,7 @@ resource "aws_sfn_state_machine" "lambda-state-machine" {
     },
     "wait": {
       "Type": "Wait",
-      "Seconds": 60,
+      "Seconds": 10,
       "Next": "lambda"
     },
     "gone": {

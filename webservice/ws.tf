@@ -191,8 +191,10 @@ resource "aws_alb_target_group" "target-group-admin" {
 
   health_check {
     protocol = "HTTP"
-    interval = 30
+    interval = 20
     path     = "/"
+    healthy_threshold = 2
+    unhealthy_threshold = 5
   }
 
   tags = "${merge(
@@ -242,8 +244,8 @@ resource "aws_autoscaling_group" "asg" {
   desired_capacity          = 2
   enabled_metrics           = ["GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
   health_check_type         = "ELB"
-  health_check_grace_period = 60
-  default_cooldown          = 180
+  health_check_grace_period = 120
+  default_cooldown          = 9
 
   launch_configuration = "${aws_launch_configuration.launch-config.name}"
   target_group_arns    = ["${aws_alb_target_group.target-group-ws.arn}", "${aws_alb_target_group.target-group-admin.arn}"]
